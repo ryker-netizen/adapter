@@ -3,384 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S Y S T E M _ F A I L U R E</title>
+    <title>TERMINAL_VOID</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        /* Основной шрифт консоли */
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono&display=swap');
 
         :root {
-            --bg: #050505;
-            --text-main: #33ff33;
-            --text-dim: #1a661a;
-            --glitch-red: #ff003c;
-            --glitch-blue: #00e5ff;
+            --bg: #030303;
+            --low-red: #4d0000;
+            --main-red: #8b0000;
+            --terminal-green: #1aff1a;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body, html {
-            height: 100%;
-            background-color: var(--bg);
-            color: var(--text-main);
-            font-family: 'VT323', monospace;
+        body {
+            background: var(--bg);
+            color: var(--terminal-green);
+            font-family: 'Space Mono', monospace;
+            height: 100vh;
             overflow: hidden;
-            font-size: 1.2rem;
-        }
-
-        /* CRT Effect Overlay */
-        .crt::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.5) 50%), 
-            linear-gradient(90deg, rgba(255, 0, 0, 0.12), rgba(0, 255, 0, 0.05), rgba(0, 0, 255, 0.12));
-            z-index: 2;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
-
-        #terminal {
-            padding: 2rem;
-            height: 100%;
             display: flex;
             flex-direction: column;
             position: relative;
+        }
+
+        /* Сканирующие линии (CRT) — сделали тоньше и незаметнее */
+        .crt-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        #terminal {
+            padding: 40px;
             z-index: 1;
+            flex-grow: 1;
         }
 
-        /* МОРГАЮЩИЙ КУРСОР */
-        @keyframes cursor-blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-        #typing-indicator {
+        .line { margin-bottom: 5px; min-height: 1.2em; }
+
+        #cursor {
             display: inline-block;
-            font-weight: bold;
-            animation: cursor-blink 1s step-end infinite;
+            width: 10px;
+            height: 18px;
+            background: var(--terminal-green);
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
         }
 
-        .hidden-text {
-            color: var(--bg);
-            user-select: all;
-            margin-top: 2rem;
-            cursor: text;
-            transition: 0.3s;
-        }
-        
-        .hidden-text::selection {
-            background-color: #333;
-            color: #555;
-        }
-        .hidden-text:hover {
-            color: #0f0;
-            text-shadow: 0 0 5px #0f0;
-        }
+        @keyframes blink { 50% { opacity: 0; } }
 
-        /* АПГРЕЙД ФИНАЛЬНОГО ЭКРАНА */
+        /* ФИНАЛЬНЫЙ ЭКРАН — АНАЛОГОВЫЙ ХОРРОР */
         #reveal-container {
             display: none;
-            position: absolute;
+            position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: #020202; /* Немного глубже, чем фон консоли */
-            z-index: 10;
+            background: #000;
+            z-index: 200;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            /* Легкая красная аура по краям экрана */
-            box-shadow: inset 0 0 150px rgba(50, 0, 0, 0.5);
         }
 
-        #reveal-container img {
-            max-width: 90%;
-            max-height: 50vh;
-            /* Растворяем жесткие края картинки во тьме! */
-            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 80%);
-            mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 80%);
-            
-            filter: grayscale(80%) contrast(150%) sepia(40%) hue-rotate(-30deg) drop-shadow(0 0 20px rgba(255,0,0,0.2));
-            animation: img-float 4s ease-in-out infinite, image-shake 0.15s infinite;
-            opacity: 0.8;
-            pointer-events: none;
-        }
-
-        /* НОВЫЕ ШРИФТЫ ДЛЯ ФИНАЛА (Аналоговый хоррор) */
-        .final-message {
-            margin-top: 2rem;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.5rem;
-            color: #666;
-            letter-spacing: 8px; /* Широкий интервал добавляет жути */
+        .final-text {
+            font-family: serif; /* Грязный системный шрифт */
+            color: #d1d1d1;
             text-transform: lowercase;
-            animation: pulse-dark 3s infinite;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            letter-spacing: 12px;
+            font-size: 1.2rem;
+            opacity: 0;
+            animation: emerge 5s ease forwards;
         }
 
-        .channel-name {
-            margin-top: 1rem;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 3.5rem;
+        .channel-link {
+            margin-top: 30px;
+            font-family: serif;
+            color: var(--main-red);
+            font-size: 2.5rem;
             font-weight: bold;
-            color: #8b0000;
+            text-decoration: none;
             letter-spacing: 4px;
-            /* Эффект хроматической аберрации вместо дешевого глитча */
-            text-shadow: 
-                -3px 0px 0px rgba(0, 255, 255, 0.4),
-                3px 0px 0px rgba(255, 0, 0, 0.4);
-            animation: slight-glitch 0.2s infinite;
+            opacity: 0;
+            filter: blur(10px);
+            animation: emerge-red 4s ease forwards 3s; /* Задержка появления */
         }
 
-        /* ПАСХАЛКА */
-        .easter-egg {
-            position: absolute;
-            bottom: 10px;
-            right: 15px;
-            font-family: 'VT323', monospace;
-            font-size: 14px;
-            color: #080808; /* Идеально сливается */
-            z-index: 20;
-            transition: all 0.5s;
-            cursor: default;
-            user-select: none;
-        }
-        .easter-egg:hover {
-            color: var(--text-main);
-            text-shadow: 0 0 10px var(--text-main);
-            letter-spacing: 2px;
+        @keyframes emerge {
+            0% { opacity: 0; filter: blur(10px); transform: translateY(10px); }
+            100% { opacity: 0.6; filter: blur(0); transform: translateY(0); }
         }
 
-        /* Анимации */
-        @keyframes image-shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            25% { transform: translate(-1px, -1px) rotate(-0.5deg); }
-            50% { transform: translate(1px, 0px) rotate(0.5deg); }
-            75% { transform: translate(-1px, 1px) rotate(0deg); }
-            100% { transform: translate(0px, -1px) rotate(-0.5deg); }
-        }
-        
-        @keyframes img-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes emerge-red {
+            0% { opacity: 0; filter: blur(20px); }
+            100% { opacity: 1; filter: blur(0); }
         }
 
-        @keyframes pulse-dark {
-            0%, 100% { opacity: 0.8; filter: blur(0px); }
-            50% { opacity: 0.4; filter: blur(1px); }
+        /* Эффект "плавания" текста */
+        .drift {
+            animation: drift-anim 8s ease-in-out infinite;
         }
 
-        @keyframes fade-in {
-    0% { opacity: 0; filter: blur(6px); }
-    100% { opacity: 1; filter: blur(0); }
-}
-
-@keyframes slight-flicker {
-    0%, 100% { opacity: 1; }
-    48% { opacity: 0.9; }
-    50% { opacity: 0.4; }
-    52% { opacity: 1; }
-}
-
-@keyframes text-drift {
-    0% { transform: translate(0, 0); }
-    25% { transform: translate(-1px, 0.5px); }
-    50% { transform: translate(1px, -0.5px); }
-    75% { transform: translate(-0.5px, -1px); }
-    100% { transform: translate(0, 0); }
+        @keyframes drift-anim {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(2px, -3px); }
         }
     </style>
 </head>
-<body class="crt">
+<body>
+    <div class="crt-overlay"></div>
 
     <div id="terminal">
-        <div id="boot-sequence"></div>
-        <div id="interactive-layer" style="display: none;">
-            <p>> DIRECTIVE PENDING...</p>
-            <p>> MEMORY FRAGMENT LOST. INITIATE MANUAL OVERRIDE.</p>
-            <p>> WAITING FOR INPUT: <span id="input-buffer"></span><span id="typing-indicator">_</span></p>
-            <p class="hidden-text">...it's cold in here. type "ignite" to start the fire...</p>
+        <div id="output"></div>
+        <div class="line">
+            <span id="input-line"></span><span id="cursor"></span>
         </div>
     </div>
 
     <div id="reveal-container">
-        <img src="valentine.jpg" alt="anomaly">
-.final-message {
-    margin-top: 2rem;
-    font-family: 'VT323', monospace;
-    font-size: 1.4rem;
-    color: #3a3a3a;
-    letter-spacing: 6px;
-    text-transform: lowercase;
-
-    opacity: 0;
-    animation: fade-in 4s ease forwards, slight-flicker 6s infinite;
-}
-
-.channel-name {
-    margin-top: 1rem;
-    font-family: 'VT323', monospace;
-    font-size: 3rem;
-    color: #b30000;
-    letter-spacing: 3px;
-
-    opacity: 0;
-    animation: fade-in 2s ease forwards 2s, text-drift 6s infinite;
-}
+        <p class="final-text drift">try going to the old channel</p>
+        <a href="https://t.me/vzaidkost" class="channel-link">@vzaidkost</a>
+    </div>
 
     <script>
-        console.log("%c[!] ПРЕДУПРЕЖДЕНИЕ О НЕУПОЛНОМОЧЕННОМ ДОСТУПЕ [!]", "color: red; font-size: 24px; font-weight: bold; background: black;");
-        console.log("%cТебе не нужно смотреть в код. Ответ кроется в пустоте. Подожги её (ignite).", "color: #33ff33; font-size: 14px; font-family: monospace;");
+        const output = document.getElementById('output');
+        const inputLine = document.getElementById('input-line');
+        const reveal = document.getElementById('reveal-container');
+        let buffer = "";
 
-        const bootLines = [
-            "INITIATING CORE PROTOCOLS...",
-            "LOADING VIRTUAL ENVIRONMENT... [OK]",
-            "DECRYPTING ARCHIVES... [FAILED]",
-            "WARNING: SEVERE DATA CORRUPTION DETECTED.",
-            "ATTEMPTING TO ESTABLISH SECURE CONNECTION...",
-            "CONNECTION REFUSED BY HOST.",
-            "ISOLATING SECTOR: V-Z-A-I-D...",
-            "..."
-        ];
+        const log = (text, delay = 0) => {
+            return new Promise(res => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'line';
+                    div.innerHTML = `> ${text}`;
+                    output.appendChild(div);
+                    res();
+                }, delay);
+            });
+        };
 
-        const bootContainer = document.getElementById('boot-sequence');
-        const interactiveLayer = document.getElementById('interactive-layer');
-        const revealContainer = document.getElementById('reveal-container');
-        const inputBufferEl = document.getElementById('input-buffer');
-
-        async function typeLines() {
-            for (let line of bootLines) {
-                const p = document.createElement('p');
-                bootContainer.appendChild(p);
-                for (let i = 0; i < line.length; i++) {
-                    p.innerHTML += line.charAt(i);
-                    await new Promise(r => setTimeout(r, 20 + Math.random() * 30));
-                }
-                await new Promise(r => setTimeout(r, 300));
-            }
-            setTimeout(() => {
-                bootContainer.innerHTML = ''; 
-                interactiveLayer.style.display = 'block'; 
-            }, 1000);
+        async function init() {
+            await log("KERNEL_READY", 500);
+            await log("LOADING_FRAGMENTS...", 300);
+            await log("ERROR: 0x000F12 - MEMORY_LEAK", 800);
+            await log("SYSTEM_OVERRIDE_REQUIRED", 400);
+            await log("TYPE 'ignite' TO CONTINUE", 200);
         }
-
-        window.onload = typeLines;
-
-        let keyBuffer = "";
-        const secretCode = "ignite";
 
         document.addEventListener('keydown', (e) => {
-            if(interactiveLayer.style.display === 'none') return; 
-            
-            if (e.key === "Backspace") {
-                keyBuffer = keyBuffer.slice(0, -1);
-            } 
-            else if (e.key.length === 1 && e.key.match(/[a-z0-9]/i)) {
-                keyBuffer += e.key.toLowerCase();
+            if (e.key === "Enter") {
+                if (buffer === "ignite") {
+                    trigger();
+                } else {
+                    log(`UNKNOWN_COMMAND: ${buffer}`, 0);
+                    buffer = "";
+                    inputLine.innerText = "";
+                }
+            } else if (e.key === "Backspace") {
+                buffer = buffer.slice(0, -1);
+            } else if (e.key.length === 1) {
+                buffer += e.key.toLowerCase();
             }
-
-            // Обновляем только текст, курсор живет своей жизнью
-            inputBufferEl.innerText = keyBuffer.slice(-10);
-
-            if (keyBuffer.includes(secretCode)) {
-                triggerAnomaly();
-            }
-            
-            // Легкие искажения при наборе текста
-            if (Math.random() > 0.9) {
-                document.body.style.transform = "scale(1.01) translate(" + (Math.random()*2-1) + "px, " + (Math.random()*2-1) + "px)";
-                document.body.style.filter = "hue-rotate(90deg)";
-                setTimeout(() => {
-                    document.body.style.transform = "none";
-                    document.body.style.filter = "none";
-                }, 50);
-            }
+            inputLine.innerText = buffer;
         });
 
-        function triggerAnomaly() {
-            document.body.style.animation = "image-shake 0.1s infinite";
-            document.body.style.filter = "invert(100%) contrast(200%)";
-            document.body.style.background = "red";
+        function trigger() {
+            document.body.style.background = "#fff"; // Вспышка
             setTimeout(() => {
-                document.body.style.background = "black";
-            }, 80);
-            
-            playGlitchSound();
-
-            setTimeout(() => {
-                document.body.style.animation = "none";
-                document.body.style.filter = "none";
                 document.getElementById('terminal').style.display = 'none';
-                revealContainer.style.display = 'flex';
-            }, 800);
+                reveal.style.display = 'flex';
+                playLowHum();
+            }, 50);
         }
 
-        function playGlitchSound() {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
-            const ctx = new AudioContext();
-            const bufferSize = ctx.sampleRate * 1.5; 
-            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1; 
-            }
-            const noise = ctx.createBufferSource();
-            noise.buffer = buffer;
-            
-            const bandpass = ctx.createBiquadFilter();
-            bandpass.type = 'bandpass';
-            bandpass.frequency.value = 1000;
-            bandpass.Q.value = 20;
+        function playLowHum() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
             const gain = ctx.createGain();
-            gain.gain.value = 0.3;
-
-            noise.connect(bandpass);
-            bandpass.connect(gain);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(40, ctx.currentTime); // Низкий гул
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            osc.connect(gain);
             gain.connect(ctx.destination);
-            noise.start(0);
+            osc.start();
         }
 
-        setInterval(() => {
-            if (interactiveLayer.style.display === 'block') {
-                const glitchChance = Math.random();
-
-                if (glitchChance > 0.85) {
-                    document.body.style.filter = "saturate(500%) hue-rotate(45deg)";
-                    setTimeout(() => { document.body.style.filter = "none"; }, 50);
-                }
-
-                if (glitchChance > 0.97) {
-                    const msgs = [
-                        "> someone is breathing",
-                        "> stop typing",
-                        "> connection unstable",
-                        "> do you feel cold?",
-                        "> the old channel is waiting"
-                    ];
-
-                    const fake = document.createElement('p');
-                    fake.innerText = msgs[Math.floor(Math.random() * msgs.length)];
-                    fake.style.color = "#ff003c";
-                    fake.style.opacity = "0.5";
-                    fake.style.fontStyle = "italic";
-
-                    bootContainer.appendChild(fake);
-                    setTimeout(() => fake.remove(), 600);
-
-                } else if (glitchChance > 0.92) {
-                    const fake = document.createElement('p');
-                    fake.innerText = "> don't look behind you";
-                    fake.style.color = "#ff003c";
-                    bootContainer.appendChild(fake);
-                    setTimeout(() => fake.remove(), 400);
-                }
-            }
-        }, 2000);
+        init();
     </script>
 </body>
-</html>
 </html>
