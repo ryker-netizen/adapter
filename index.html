@@ -28,9 +28,9 @@
             font-family: 'VT323', monospace;
             overflow: hidden;
             font-size: 1.2rem;
-            transition: transform 0.1s ease-in-out;
         }
 
+        /* CRT Effect Overlay */
         .crt::before {
             content: " ";
             display: block;
@@ -38,7 +38,7 @@
             top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.5) 50%), 
             linear-gradient(90deg, rgba(255, 0, 0, 0.12), rgba(0, 255, 0, 0.05), rgba(0, 0, 255, 0.12));
-            z-index: 5;
+            z-index: 2;
             background-size: 100% 2px, 3px 100%;
             pointer-events: none;
         }
@@ -52,19 +52,21 @@
             z-index: 1;
         }
 
+        /* Glitch Animation */
         .glitch {
             position: relative;
             color: white;
             font-size: 3rem;
             animation: text-glitch-anim 2s infinite linear alternate-reverse;
+            overflow: hidden;
         }
-
-        .glitch::before, .glitch::after {
+        .glitch::before,
+        .glitch::after {
             content: attr(data-text);
             position: absolute;
-            left: 0; width: 100%;
+            left: 0;
+            width: 100%;
             background: transparent;
-            top: 0;
         }
 
         .glitch::before {
@@ -76,7 +78,7 @@
 
         .glitch::after {
             left: -2px;
-            text-shadow: 2px 0 blue;
+            text-shadow: -2px 0 blue;
             clip-path: inset(50% 0 0 0);
             animation: glitchBottom 0.3s infinite linear;
         }
@@ -100,16 +102,23 @@
         }
 
         .hidden-text {
-            color: var(--bg);
+            color: var(--bg); /* Идеально сливается с фоном */
             user-select: all;
             margin-top: 2rem;
             cursor: text;
             transition: 0.3s;
         }
         
-        .hidden-text::selection { background-color: #555; color: white; }
-        .hidden-text:hover { color: #0f0; text-shadow: 0 0 5px #0f0; }
+        .hidden-text::selection {
+            background-color: #555;
+            color: white;
+        }
+        .hidden-text:hover {
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0;
+        }
 
+        /* Финальная стадия */
         #reveal-container {
             display: none;
             position: absolute;
@@ -129,12 +138,15 @@
             filter: grayscale(100%) contrast(150%) sepia(50%) hue-rotate(-50deg);
             animation: image-shake 0.2s infinite;
             opacity: 0.8;
+            pointer-events: none;
         }
 
         .final-message {
             margin-top: 2rem;
             font-size: 2.5rem;
             color: #ccc;
+            letter-spacing: 2px;
+            text-transform: lowercase;
             animation: pulse 2s infinite;
         }
 
@@ -143,15 +155,31 @@
             color: var(--glitch-red);
             text-shadow: 0 0 10px var(--glitch-red);
             font-weight: bold;
+            margin-top: 1rem;
         }
 
         @keyframes image-shake {
-            0% { transform: translate(1px, 1px); }
-            20% { transform: translate(-3px, 0px); }
-            100% { transform: translate(1px, -2px); }
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
         }
 
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes flicker {
+            0% { opacity: 1; }
+            48% { opacity: 0.98; }
+            50% { opacity: 0.4; }
+            52% { opacity: 1; }
+            100% { opacity: 0.99; }
+        }
+        
     </style>
 </head>
 <body class="crt">
@@ -177,12 +205,16 @@
     </div>
 
     <script>
+        console.log("%c[!] ПРЕДУПРЕЖДЕНИЕ О НЕУПОЛНОМОЧЕННОМ ДОСТУПЕ [!]", "color: red; font-size: 24px; font-weight: bold; background: black;");
+        console.log("%cТебе не нужно смотреть в код. Ответ кроется в пустоте. Подожги её (ignite).", "color: #33ff33; font-size: 14px; font-family: monospace;");
+
         const bootLines = [
             "INITIATING CORE PROTOCOLS...",
             "LOADING VIRTUAL ENVIRONMENT... [OK]",
             "DECRYPTING ARCHIVES... [FAILED]",
             "WARNING: SEVERE DATA CORRUPTION DETECTED.",
             "ATTEMPTING TO ESTABLISH SECURE CONNECTION...",
+            "CONNECTION REFUSED BY HOST.",
             "ISOLATING SECTOR: V-Z-A-I-D...",
             "..."
         ];
@@ -197,14 +229,14 @@
                 bootContainer.appendChild(p);
                 for (let i = 0; i < line.length; i++) {
                     p.innerHTML += line.charAt(i);
-                    await new Promise(r => setTimeout(r, 25));
+                    await new Promise(r => setTimeout(r, 20 + Math.random() * 30));
                 }
-                await new Promise(r => setTimeout(r, 200));
+                await new Promise(r => setTimeout(r, 300));
             }
             setTimeout(() => {
                 bootContainer.innerHTML = ''; 
                 interactiveLayer.style.display = 'block'; 
-            }, 800);
+            }, 1000);
         }
 
         window.onload = typeLines;
@@ -213,13 +245,14 @@
         const secretCode = "ignite";
 
         document.addEventListener('keydown', (e) => {
-            if(interactiveLayer.style.display === 'none') return;
+            if(interactiveLayer.style.display === 'none') return; 
 
             const indicator = document.getElementById('typing-indicator');
             
             if (e.key === "Backspace") {
                 keyBuffer = keyBuffer.slice(0, -1);
-            } else if (e.key.length === 1 && e.key.match(/[a-z0-9]/i)) {
+            } 
+            else if (e.key.length === 1 && e.key.match(/[a-z0-9]/i)) {
                 keyBuffer += e.key.toLowerCase();
             }
 
@@ -228,63 +261,108 @@
             if (keyBuffer.includes(secretCode)) {
                 triggerAnomaly();
             }
-
+            
             if (Math.random() > 0.9) {
                 indicator.innerText = "█";
-                document.body.style.transform = "scale(1.02)";
                 setTimeout(() => {
-                    document.body.style.transform = "scale(1)";
-                    indicator.innerText = keyBuffer.slice(-10) + "_";
+                    document.body.style.transform = "scale(1.02)";
+                    setTimeout(() => {
+                        document.body.style.transform = "scale(1)";
+                    }, 100);
                 }, 100);
+                setTimeout(() => {
+                    indicator.innerText = keyBuffer.slice(-10) + "_";
+                }, 200);
             }
         });
 
         function triggerAnomaly() {
             document.body.style.animation = "image-shake 0.1s infinite";
             document.body.style.filter = "invert(100%)";
+            document.body.style.background = "white";
+            setTimeout(() => {
+                document.body.style.background = "black";
+            }, 50);
+            
             playGlitchSound();
+
             setTimeout(() => {
                 document.body.style.animation = "none";
                 document.body.style.filter = "none";
                 document.getElementById('terminal').style.display = 'none';
                 revealContainer.style.display = 'flex';
-                revealContainer.style.backgroundColor = "#110000";
+                
+                setTimeout(() => {
+                    revealContainer.style.backgroundColor = "#110000";
+                }, 100);
             }, 800);
         }
 
         function playGlitchSound() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const b = ctx.createBuffer(1, ctx.sampleRate * 1.5, ctx.sampleRate);
-                const d = b.getChannelData(0);
-                for (let i = 0; i < b.length; i++) d[i] = Math.random() * 2 - 1;
-                const s = ctx.createBufferSource();
-                s.buffer = b;
-                const g = ctx.createGain();
-                g.gain.value = 0.2;
-                s.connect(g);
-                g.connect(ctx.destination);
-                s.start(0);
-            } catch(e) {}
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const bufferSize = ctx.sampleRate * 1.5; 
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1; 
+            }
+            const noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            
+            const bandpass = ctx.createBiquadFilter();
+            bandpass.type = 'bandpass';
+            bandpass.frequency.value = 1000;
+            bandpass.Q.value = 20;
+            const gain = ctx.createGain();
+            gain.gain.value = 0.3;
+
+            noise.connect(bandpass);
+            bandpass.connect(gain);
+            gain.connect(ctx.destination);
+            noise.start(0);
         }
 
+        // эффект "кто-то наблюдает"
         setInterval(() => {
             if (interactiveLayer.style.display === 'block') {
-                const gc = Math.random();
-                if (gc > 0.85) {
+                const glitchChance = Math.random();
+
+                if (glitchChance > 0.85) {
                     document.body.style.filter = "invert(1)";
-                    setTimeout(() => { document.body.style.filter = "none"; }, 50);
+                    setTimeout(() => {
+                        document.body.style.filter = "none";
+                    }, 50);
                 }
-                if (gc > 0.95) {
-                    const msgs = ["> i see you", "> stop typing", "> not safe", "> look behind"];
-                    const f = document.createElement('p');
-                    f.innerText = msgs[Math.floor(Math.random() * msgs.length)];
-                    f.style.color = "red";
-                    bootContainer.appendChild(f);
-                    setTimeout(() => f.remove(), 1000);
+
+                if (glitchChance > 0.97) {
+                    const msgs = [
+                        "> i can see you",
+                        "> stop typing",
+                        "> you shouldn't be here",
+                        "> it's not safe",
+                        "> you already typed that"
+                    ];
+
+                    const fake = document.createElement('p');
+                    fake.innerText = msgs[Math.floor(Math.random() * msgs.length)];
+                    fake.style.color = "#ff003c";
+                    fake.style.opacity = "0.7";
+
+                    bootContainer.appendChild(fake);
+                    setTimeout(() => fake.remove(), 1000);
+
+                } else if (glitchChance > 0.92) {
+                    const fake = document.createElement('p');
+                    fake.innerText = "> don't look behind you";
+                    fake.style.color = "#ff003c";
+
+                    bootContainer.appendChild(fake);
+                    setTimeout(() => fake.remove(), 800);
                 }
             }
-        }, 2000);
+        }, 2000); // ЗАКРЫВАЕМ СЕТИНТЕРВАЛ
     </script>
 </body>
 </html>
