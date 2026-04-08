@@ -52,53 +52,15 @@
             z-index: 1;
         }
 
-        /* Glitch Animation */
-        .glitch {
-            position: relative;
-            color: white;
-            font-size: 3rem;
-            animation: text-glitch-anim 2s infinite linear alternate-reverse;
-            overflow: hidden;
+        /* МОРГАЮЩИЙ КУРСОР */
+        @keyframes cursor-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
-        .glitch::before,
-        .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            left: 0;
-            width: 100%;
-            background: transparent;
-        }
-
-        .glitch::before {
-            left: 2px;
-            text-shadow: -2px 0 red;
-            clip-path: inset(0 0 50% 0);
-            animation: glitchTop 0.3s infinite linear;
-        }
-
-        .glitch::after {
-            left: -2px;
-            text-shadow: -2px 0 blue;
-            clip-path: inset(50% 0 0 0);
-            animation: glitchBottom 0.3s infinite linear;
-        }
-
-        @keyframes glitchTop {
-            0% { transform: translate(0,0); }
-            50% { transform: translate(-3px,-2px); }
-            100% { transform: translate(0,0); }
-        }
-
-        @keyframes glitchBottom {
-            0% { transform: translate(0,0); }
-            50% { transform: translate(3px,2px); }
-            100% { transform: translate(0,0); }
-        }
-
-        @keyframes text-glitch-anim {
-            0% { text-shadow: 2px 0 var(--glitch-red), -2px 0 var(--glitch-blue); }
-            50% { text-shadow: -2px 0 var(--glitch-red), 2px 0 var(--glitch-blue); }
-            100% { text-shadow: 2px 0 var(--glitch-red), -2px 0 var(--glitch-blue); }
+        #typing-indicator {
+            display: inline-block;
+            font-weight: bold;
+            animation: cursor-blink 1s step-end infinite;
         }
 
         .hidden-text {
@@ -110,66 +72,114 @@
         }
         
         .hidden-text::selection {
-            background-color: #555;
-            color: white;
+            background-color: #333;
+            color: #555;
         }
         .hidden-text:hover {
             color: #0f0;
             text-shadow: 0 0 5px #0f0;
         }
 
+        /* АПГРЕЙД ФИНАЛЬНОГО ЭКРАНА */
         #reveal-container {
             display: none;
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: black;
+            background: #020202; /* Немного глубже, чем фон консоли */
             z-index: 10;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
+            /* Легкая красная аура по краям экрана */
+            box-shadow: inset 0 0 150px rgba(50, 0, 0, 0.5);
         }
 
         #reveal-container img {
-            max-width: 80%;
+            max-width: 90%;
             max-height: 50vh;
-            filter: grayscale(100%) contrast(150%) sepia(50%) hue-rotate(-50deg);
-            animation: image-shake 0.2s infinite;
+            /* Растворяем жесткие края картинки во тьме! */
+            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 80%);
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 80%);
+            
+            filter: grayscale(80%) contrast(150%) sepia(40%) hue-rotate(-30deg) drop-shadow(0 0 20px rgba(255,0,0,0.2));
+            animation: img-float 4s ease-in-out infinite, image-shake 0.15s infinite;
             opacity: 0.8;
             pointer-events: none;
         }
 
+        /* НОВЫЕ ШРИФТЫ ДЛЯ ФИНАЛА (Аналоговый хоррор) */
         .final-message {
             margin-top: 2rem;
-            font-size: 2.5rem;
-            color: #ccc;
-            letter-spacing: 2px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5rem;
+            color: #666;
+            letter-spacing: 8px; /* Широкий интервал добавляет жути */
             text-transform: lowercase;
-            animation: pulse 2s infinite;
+            animation: pulse-dark 3s infinite;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
         }
 
         .channel-name {
-            font-size: 4rem;
-            color: var(--glitch-red);
-            text-shadow: 0 0 10px var(--glitch-red);
-            font-weight: bold;
             margin-top: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #8b0000;
+            letter-spacing: 4px;
+            /* Эффект хроматической аберрации вместо дешевого глитча */
+            text-shadow: 
+                -3px 0px 0px rgba(0, 255, 255, 0.4),
+                3px 0px 0px rgba(255, 0, 0, 0.4);
+            animation: slight-glitch 0.2s infinite;
         }
 
+        /* ПАСХАЛКА */
+        .easter-egg {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-family: 'VT323', monospace;
+            font-size: 14px;
+            color: #080808; /* Идеально сливается */
+            z-index: 20;
+            transition: all 0.5s;
+            cursor: default;
+            user-select: none;
+        }
+        .easter-egg:hover {
+            color: var(--text-main);
+            text-shadow: 0 0 10px var(--text-main);
+            letter-spacing: 2px;
+        }
+
+        /* Анимации */
         @keyframes image-shake {
             0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
+            25% { transform: translate(-1px, -1px) rotate(-0.5deg); }
+            50% { transform: translate(1px, 0px) rotate(0.5deg); }
+            75% { transform: translate(-1px, 1px) rotate(0deg); }
+            100% { transform: translate(0px, -1px) rotate(-0.5deg); }
+        }
+        
+        @keyframes img-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        @keyframes pulse-dark {
+            0%, 100% { opacity: 0.8; filter: blur(0px); }
+            50% { opacity: 0.4; filter: blur(1px); }
+        }
+
+        @keyframes slight-glitch {
+            0% { transform: skewX(0deg); }
+            20% { transform: skewX(-1deg); }
+            40% { transform: skewX(1deg); }
+            60% { transform: skewX(0deg); }
+            80% { transform: skewX(0.5deg); }
+            100% { transform: skewX(0deg); }
         }
     </style>
 </head>
@@ -180,19 +190,20 @@
         <div id="interactive-layer" style="display: none;">
             <p>> DIRECTIVE PENDING...</p>
             <p>> MEMORY FRAGMENT LOST. INITIATE MANUAL OVERRIDE.</p>
-            <p>> WAITING FOR INPUT: <span id="typing-indicator">_</span></p>
+            <p>> WAITING FOR INPUT: <span id="input-buffer"></span><span id="typing-indicator">_</span></p>
             <p class="hidden-text">...it's cold in here. type "ignite" to start the fire...</p>
         </div>
     </div>
 
     <div id="reveal-container">
         <img src="valentine.jpg" alt="anomaly">
-        <div class="final-message glitch" data-text="try going to the old channel">
+        <div class="final-message">
             try going to the old channel
         </div>
-        <div class="channel-name glitch" data-text="@vzaidkost">
+        <div class="channel-name">
             @vzaidkost
         </div>
+        <div class="easter-egg">19.10.2025</div>
     </div>
 
     <script>
@@ -213,6 +224,7 @@
         const bootContainer = document.getElementById('boot-sequence');
         const interactiveLayer = document.getElementById('interactive-layer');
         const revealContainer = document.getElementById('reveal-container');
+        const inputBufferEl = document.getElementById('input-buffer');
 
         async function typeLines() {
             for (let line of bootLines) {
@@ -237,8 +249,6 @@
 
         document.addEventListener('keydown', (e) => {
             if(interactiveLayer.style.display === 'none') return; 
-
-            const indicator = document.getElementById('typing-indicator');
             
             if (e.key === "Backspace") {
                 keyBuffer = keyBuffer.slice(0, -1);
@@ -247,33 +257,31 @@
                 keyBuffer += e.key.toLowerCase();
             }
 
-            indicator.innerText = keyBuffer.slice(-10) + "_";
+            // Обновляем только текст, курсор живет своей жизнью
+            inputBufferEl.innerText = keyBuffer.slice(-10);
 
             if (keyBuffer.includes(secretCode)) {
                 triggerAnomaly();
             }
             
+            // Легкие искажения при наборе текста
             if (Math.random() > 0.9) {
-                indicator.innerText = "█";
+                document.body.style.transform = "scale(1.01) translate(" + (Math.random()*2-1) + "px, " + (Math.random()*2-1) + "px)";
+                document.body.style.filter = "hue-rotate(90deg)";
                 setTimeout(() => {
-                    document.body.style.transform = "scale(1.02)";
-                    setTimeout(() => {
-                        document.body.style.transform = "scale(1)";
-                    }, 100);
-                }, 100);
-                setTimeout(() => {
-                    indicator.innerText = keyBuffer.slice(-10) + "_";
-                }, 200);
+                    document.body.style.transform = "none";
+                    document.body.style.filter = "none";
+                }, 50);
             }
         });
 
         function triggerAnomaly() {
             document.body.style.animation = "image-shake 0.1s infinite";
-            document.body.style.filter = "invert(100%)";
-            document.body.style.background = "white";
+            document.body.style.filter = "invert(100%) contrast(200%)";
+            document.body.style.background = "red";
             setTimeout(() => {
                 document.body.style.background = "black";
-            }, 50);
+            }, 80);
             
             playGlitchSound();
 
@@ -282,10 +290,6 @@
                 document.body.style.filter = "none";
                 document.getElementById('terminal').style.display = 'none';
                 revealContainer.style.display = 'flex';
-                
-                setTimeout(() => {
-                    revealContainer.style.backgroundColor = "#110000";
-                }, 100);
             }, 800);
         }
 
@@ -320,39 +324,38 @@
                 const glitchChance = Math.random();
 
                 if (glitchChance > 0.85) {
-                    document.body.style.filter = "invert(1)";
-                    setTimeout(() => {
-                        document.body.style.filter = "none";
-                    }, 50);
+                    document.body.style.filter = "saturate(500%) hue-rotate(45deg)";
+                    setTimeout(() => { document.body.style.filter = "none"; }, 50);
                 }
 
                 if (glitchChance > 0.97) {
                     const msgs = [
-                        "> i can see you",
+                        "> someone is breathing",
                         "> stop typing",
-                        "> you shouldn't be here",
-                        "> it's not safe",
-                        "> you already typed that"
+                        "> connection unstable",
+                        "> do you feel cold?",
+                        "> the old channel is waiting"
                     ];
 
                     const fake = document.createElement('p');
                     fake.innerText = msgs[Math.floor(Math.random() * msgs.length)];
                     fake.style.color = "#ff003c";
-                    fake.style.opacity = "0.7";
+                    fake.style.opacity = "0.5";
+                    fake.style.fontStyle = "italic";
 
                     bootContainer.appendChild(fake);
-                    setTimeout(() => fake.remove(), 1000);
+                    setTimeout(() => fake.remove(), 600);
 
                 } else if (glitchChance > 0.92) {
                     const fake = document.createElement('p');
                     fake.innerText = "> don't look behind you";
                     fake.style.color = "#ff003c";
-
                     bootContainer.appendChild(fake);
-                    setTimeout(() => fake.remove(), 800);
+                    setTimeout(() => fake.remove(), 400);
                 }
-            } // ЭТА СКОБКА БЫЛА ПРОПУЩЕНА
+            }
         }, 2000);
     </script>
 </body>
+</html>
 </html>
