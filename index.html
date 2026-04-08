@@ -102,7 +102,7 @@
         }
 
         .hidden-text {
-            color: var(--bg); /* Идеально сливается с фоном */
+            color: var(--bg);
             user-select: all;
             margin-top: 2rem;
             cursor: text;
@@ -118,7 +118,6 @@
             text-shadow: 0 0 5px #0f0;
         }
 
-        /* Финальная стадия */
         #reveal-container {
             display: none;
             position: absolute;
@@ -172,14 +171,6 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        @keyframes flicker {
-            0% { opacity: 1; }
-            48% { opacity: 0.98; }
-            50% { opacity: 0.4; }
-            52% { opacity: 1; }
-            100% { opacity: 0.99; }
-        }
-        
     </style>
 </head>
 <body class="crt">
@@ -324,7 +315,6 @@
             noise.start(0);
         }
 
-        // эффект "кто-то наблюдает"
         setInterval(() => {
             if (interactiveLayer.style.display === 'block') {
                 const glitchChance = Math.random();
@@ -361,8 +351,8 @@
                     bootContainer.appendChild(fake);
                     setTimeout(() => fake.remove(), 800);
                 }
-            }
-        }, 2000); // ЗАКРЫВАЕМ СЕТИНТЕРВАЛ
+            } // ЭТА СКОБКА БЫЛА ПРОПУЩЕНА
+        }, 2000);
     </script>
 </body>
 </html>
