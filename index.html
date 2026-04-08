@@ -5,15 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S Y S T E M _ F A I L U R E</title>
     <style>
-        body, html {
-    height: 100%;
-    background-color: var(--bg);
-    color: var(--text-main);
-    font-family: 'VT323', monospace;
-    overflow: hidden;
-    font-size: 1.2rem;
-    animation: flicker 0.15s infinite;
-}
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
         :root {
@@ -339,11 +330,9 @@ setTimeout(() => {
             const gain = ctx.createGain();
 gain.gain.value = 0.3;
 
+noise.connect(bandpass);
 bandpass.connect(gain);
 gain.connect(ctx.destination);
-            
-            noise.connect(bandpass);
-            bandpass.connect(ctx.destination);
             noise.start(0);
         }
 // эффект "кто-то наблюдает"
@@ -357,17 +346,31 @@ setInterval(() => {
                 document.body.style.filter = "none";
             }, 50);
         }
+if (glitchChance > 0.97) {
+    const msgs = [
+        "> i can see you",
+        "> stop typing",
+        "> you shouldn't be here",
+        "> it's not safe",
+        "> you already typed that"
+    ];
 
-        if (glitchChance > 0.92) {
-            const fake = document.createElement('p');
-            fake.innerText = "> don't look behind you";
-            fake.style.color = "#ff003c";
-            bootContainer.appendChild(fake);
+    const fake = document.createElement('p');
+    fake.innerText = msgs[Math.floor(Math.random() * msgs.length)];
+    fake.style.color = "#ff003c";
+    fake.style.opacity = "0.7";
 
-            setTimeout(() => fake.remove(), 800);
-        }
-    }
-}, 500);
+    bootContainer.appendChild(fake);
+    setTimeout(() => fake.remove(), 1000);
+
+} else if (glitchChance > 0.92) {
+    const fake = document.createElement('p');
+    fake.innerText = "> don't look behind you";
+    fake.style.color = "#ff003c";
+
+    bootContainer.appendChild(fake);
+    setTimeout(() => fake.remove(), 800);
+}
         
     </script>
 </body>
