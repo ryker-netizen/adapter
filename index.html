@@ -173,13 +173,24 @@
             50% { opacity: 0.4; filter: blur(1px); }
         }
 
-        @keyframes slight-glitch {
-            0% { transform: skewX(0deg); }
-            20% { transform: skewX(-1deg); }
-            40% { transform: skewX(1deg); }
-            60% { transform: skewX(0deg); }
-            80% { transform: skewX(0.5deg); }
-            100% { transform: skewX(0deg); }
+        @keyframes fade-in {
+    0% { opacity: 0; filter: blur(6px); }
+    100% { opacity: 1; filter: blur(0); }
+}
+
+@keyframes slight-flicker {
+    0%, 100% { opacity: 1; }
+    48% { opacity: 0.9; }
+    50% { opacity: 0.4; }
+    52% { opacity: 1; }
+}
+
+@keyframes text-drift {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-1px, 0.5px); }
+    50% { transform: translate(1px, -0.5px); }
+    75% { transform: translate(-0.5px, -1px); }
+    100% { transform: translate(0, 0); }
         }
     </style>
 </head>
@@ -197,14 +208,28 @@
 
     <div id="reveal-container">
         <img src="valentine.jpg" alt="anomaly">
-        <div class="final-message">
-            try going to the old channel
-        </div>
-        <div class="channel-name">
-            @vzaidkost
-        </div>
-        <div class="easter-egg">19.10.2025</div>
-    </div>
+.final-message {
+    margin-top: 2rem;
+    font-family: 'VT323', monospace;
+    font-size: 1.4rem;
+    color: #3a3a3a;
+    letter-spacing: 6px;
+    text-transform: lowercase;
+
+    opacity: 0;
+    animation: fade-in 4s ease forwards, slight-flicker 6s infinite;
+}
+
+.channel-name {
+    margin-top: 1rem;
+    font-family: 'VT323', monospace;
+    font-size: 3rem;
+    color: #b30000;
+    letter-spacing: 3px;
+
+    opacity: 0;
+    animation: fade-in 2s ease forwards 2s, text-drift 6s infinite;
+}
 
     <script>
         console.log("%c[!] ПРЕДУПРЕЖДЕНИЕ О НЕУПОЛНОМОЧЕННОМ ДОСТУПЕ [!]", "color: red; font-size: 24px; font-weight: bold; background: black;");
