@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S Y S T E M _ F A I L U R E</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --bg: #050505;
+            --text-main: #33ff33;
+            --text-dim: #1a661a;
+            --glitch-red: #ff003c;
+            --glitch-blue: #00e5ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            height: 100%;
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'VT323', monospace;
+            overflow: hidden;
+            font-size: 1.2rem;
+        }
+
+        /* CRT Effect Overlay */
+        .crt::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        #terminal {
+            padding: 2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Glitch Animation */
+        .glitch {
+            position: relative;
+            color: white;
+            font-size: 3rem;
+            animation: text-glitch-anim 2s infinite linear alternate-reverse;
+        }
+
+        @keyframes text-glitch-anim {
+            0% { text-shadow: 2px 0 var(--glitch-red), -2px 0 var(--glitch-blue); }
+            50% { text-shadow: -2px 0 var(--glitch-red), 2px 0 var(--glitch-blue); }
+            100% { text-shadow: 2px 0 var(--glitch-red), -2px 0 var(--glitch-blue); }
+        }
+
+        .hidden-text {
+            color: var(--bg); /* Идеально сливается с фоном */
+            user-select: all;
+            margin-top: 2rem;
+            cursor: text;
+        }
+        
+        .hidden-text::selection {
+            background-color: #555;
+            color: white;
+        }
+
+        /* Финальная стадия */
+        #reveal-container {
+            display: none;
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: black;
+            z-index: 10;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #reveal-container img {
+            max-width: 80%;
+            max-height: 50vh;
+            filter: grayscale(100%) contrast(150%) sepia(50%) hue-rotate(-50deg); /* Стилизация под искажение/огонь */
+            animation: image-shake 0.2s infinite;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .final-message {
+            margin-top: 2rem;
+            font-size: 2.5rem;
+            color: #ccc;
+            letter-spacing: 2px;
+            text-transform: lowercase;
+            animation: pulse 2s infinite;
+        }
+
+        .channel-name {
+            font-size: 4rem;
+            color: var(--glitch-red);
+            text-shadow: 0 0 10px var(--glitch-red);
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        @keyframes image-shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="crt">
+
+    <div id="terminal">
+        <div id="boot-sequence"></div>
+        <div id="interactive-layer" style="display: none;">
+            <p>> DIRECTIVE PENDING...</p>
+            <p>> MEMORY FRAGMENT LOST. INITIATE MANUAL OVERRIDE.</p>
+            <p>> WAITING FOR INPUT: <span id="typing-indicator">_</span></p>
+            <p class="hidden-text">...it's cold in here. type "ignite" to start the fire...</p>
+        </div>
+    </div>
+
+    <div id="reveal-container">
+        <img src="valentine.jpg" alt="anomaly">
+        <div class="final-message glitch" data-text="try going to the old channel">
+            try going to the old channel
+        </div>
+        <div class="channel-name glitch" data-text="@vzaidkost">
+            @vzaidkost
+        </div>
+    </div>
+
+    <script>
+        // Секретка в консоли разработчика
+        console.log("%c[!] ПРЕДУПРЕЖДЕНИЕ О НЕУПОЛНОМОЧЕННОМ ДОСТУПЕ [!]", "color: red; font-size: 24px; font-weight: bold; background: black;");
+        console.log("%cТебе не нужно смотреть в код. Ответ кроется в пустоте. Подожги её (ignite).", "color: #33ff33; font-size: 14px; font-family: monospace;");
+
+        const bootLines = [
+            "INITIATING CORE PROTOCOLS...",
+            "LOADING VIRTUAL ENVIRONMENT... [OK]",
+            "DECRYPTING ARCHIVES... [FAILED]",
+            "WARNING: SEVERE DATA CORRUPTION DETECTED.",
+            "ATTEMPTING TO ESTABLISH SECURE CONNECTION...",
+            "CONNECTION REFUSED BY HOST.",
+            "ISOLATING SECTOR: V-Z-A-I-D...",
+            "..."
+        ];
+
+        const bootContainer = document.getElementById('boot-sequence');
+        const interactiveLayer = document.getElementById('interactive-layer');
+        const revealContainer = document.getElementById('reveal-container');
+
+        // Эффект печати текста
+        async function typeLines() {
+            for (let line of bootLines) {
+                const p = document.createElement('p');
+                bootContainer.appendChild(p);
+                for (let i = 0; i < line.length; i++) {
+                    p.innerHTML += line.charAt(i);
+                    await new Promise(r => setTimeout(r, 20 + Math.random() * 30));
+                }
+                await new Promise(r => setTimeout(r, 300));
+            }
+            setTimeout(() => {
+                bootContainer.innerHTML = ''; // Очистка экрана
+                interactiveLayer.style.display = 'block'; // Показ интерактивной части
+            }, 1000);
+        }
+
+        window.onload = typeLines;
+
+        // Механика секретного ввода "ignite"
+        let keyBuffer = "";
+        const secretCode = "ignite";
+
+        document.addEventListener('keydown', (e) => {
+            if(interactiveLayer.style.display === 'none') return; // Игнорим ввод во время загрузки
+
+            const indicator = document.getElementById('typing-indicator');
+            
+            // Если нажимает Backspace, стираем
+            if (e.key === "Backspace") {
+                keyBuffer = keyBuffer.slice(0, -1);
+            } 
+            // Иначе добавляем символ (если это буква)
+            else if (e.key.length === 1 && e.key.match(/[a-z0-9]/i)) {
+                keyBuffer += e.key.toLowerCase();
+            }
+
+            // Обновляем индикатор на экране для визуала (показываем только последние 10 символов)
+            indicator.innerText = keyBuffer.slice(-10) + "_";
+
+            // Проверка секретного кода
+            if (keyBuffer.includes(secretCode)) {
+                triggerAnomaly();
+            }
+        });
+
+        function triggerAnomaly() {
+            // Эффект разрушения
+            document.body.style.animation = "image-shake 0.1s infinite";
+            document.body.style.filter = "invert(100%)";
+            
+            // Аудио-эффект искажения (Web Audio API)
+            playGlitchSound();
+
+            setTimeout(() => {
+                document.body.style.animation = "none";
+                document.body.style.filter = "none";
+                document.getElementById('terminal').style.display = 'none';
+                revealContainer.style.display = 'flex';
+                
+                // Легкий джамп-скер или глитч эффект при появлении
+                setTimeout(() => {
+                    revealContainer.style.backgroundColor = "#110000";
+                }, 100);
+            }, 800);
+        }
+
+        // Чистый JS аудио-синтез для эффекта глитча/статического шума
+        function playGlitchSound() {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const bufferSize = ctx.sampleRate * 1.5; // 1.5 seconds of noise
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1; // Белый шум
+            }
+            const noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            
+            // Фильтр для эффекта "битого радио"
+            const bandpass = ctx.createBiquadFilter();
+            bandpass.type = 'bandpass';
+            bandpass.frequency.value = 1000;
+            
+            noise.connect(bandpass);
+            bandpass.connect(ctx.destination);
+            noise.start(0);
+        }
+    </script>
+</body>
+</html>
