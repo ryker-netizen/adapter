@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S Y S T E M _ F A I L U R E</title>
     <style>
-        animation: flicker 0.15s infinite;
+        body, html {
+    height: 100%;
+    background-color: var(--bg);
+    color: var(--text-main);
+    font-family: 'VT323', monospace;
+    overflow: hidden;
+    font-size: 1.2rem;
+    animation: flicker 0.15s infinite;
+}
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
         :root {
@@ -269,6 +277,19 @@
             if (keyBuffer.includes(secretCode)) {
                 triggerAnomaly();
             }
+if (Math.random() > 0.9) {
+    indicator.innerText = "█";
+    setTimeout(() => {
+    document.body.style.transform = "scale(1.02)";
+    setTimeout(() => {
+        document.body.style.transform = "scale(1)";
+    }, 100);
+}, 100);
+    setTimeout(() => {
+        indicator.innerText = keyBuffer.slice(-10) + "_";
+    }, 200);
+}
+            
         });
 
         function triggerAnomaly() {
@@ -314,6 +335,12 @@ setTimeout(() => {
             const bandpass = ctx.createBiquadFilter();
             bandpass.type = 'bandpass';
             bandpass.frequency.value = 1000;
+            bandpass.Q.value = 20;
+            const gain = ctx.createGain();
+gain.gain.value = 0.3;
+
+bandpass.connect(gain);
+gain.connect(ctx.destination);
             
             noise.connect(bandpass);
             bandpass.connect(ctx.destination);
